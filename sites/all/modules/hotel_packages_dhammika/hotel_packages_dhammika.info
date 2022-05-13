@@ -1,0 +1,5 @@
+name = Hotel packages dhammika
+description = Drupal 7 custom module done for eyepax by Dhammika
+core = 7.x
+package = Drupal test dhammika
+version = "7.x-1.0"

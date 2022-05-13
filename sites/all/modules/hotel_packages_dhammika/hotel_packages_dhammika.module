@@ -1,0 +1,110 @@
+<?php
+/**
+ * Implements hook_help().
+ */
+function hotel_packages_dhammika_help($path, $arg) {
+
+}
+
+
+/**
+ * Implementation of hook_permission().
+ */
+function hotel_packages_dhammika_permission() {
+    return array(
+        'view hotel_packages_dhammika' => array(
+            'title' => t('View Hotel Packages Dhammika'),
+            'description' => t('Allow certain roles to view hotel_packages_dhammika without control of the settings.'),
+        ),
+        'administer hotel_packages_dhammika' => array(
+            'title' => t('Administer Hotel Packages Dhammika'),
+            'description' => t('Add, delete and edit the settings for hotel_packages_dhammika.'),
+        ),
+    );
+}
+
+/**
+ * Implements hook_install()
+ */
+function hotel_packages_dhammika_install(){
+
+global $user;
+
+  $node = new stdClass();
+  $node->title = "hotel-packages-list";
+  $node->type = "page";
+  node_object_prepare($node);
+  $node->language = LANGUAGE_NONE; 
+  $node->uid = $user->uid;
+  $node->format = 2;
+  $node->status = 1;
+  $node->promote = 0;
+  $node->comment = 0;
+  $node->body = 'Sample body text'; 
+  $node = node_submit( $node );
+  node_save( $node );
+
+
+ /* CREATES CONTENT TYPE */
+ $t = get_t();
+ $node_example = array(
+    'type' => 'hotel-packages-list',
+    'name' => $t('Hotel Packages List'),
+    'base' => 'node_content',
+    'description' => $t('Hotel Packages.'),
+    'body_label' => $t('Packages List')
+ );
+ $content_type = node_type_set_defaults($node_example);
+
+// Creates fields
+$field = array(
+ 'field_hotel_name' => array (
+   'field_name' => 'field_hotel_name',
+   'type' => 'text',
+   'entity_types' => array('node'),
+  ),
+
+ 'field_star_rating' => array (
+   'field_name' => 'field_star_rating',
+   'type' => 'number_integer',
+   'entity_types' => array('node'),
+  ),
+
+ 'field_area_name' => array (
+   'field_name' => 'field_area_name',
+   'type' => 'text',
+   'entity_types' => array('node'),
+  ),
+
+  'field_thumbnail_image' => array (
+    'field_name' => 'field_thumbnail_image',
+    'type' => 'image',
+  ),
+
+ 'field_package_price' => array (
+   'field_name' => 'field_package_price',
+   'type' => 'text',
+   'entity_types' => array('node'),
+  ),
+
+ 'field_detail_link' => array (
+   'field_name' => 'field_detail_link',
+   'type' => 'text',
+   'entity_types' => array('node'),
+  ),
+
+);
+
+/*
+POPULATING FIELDS USING XML FEED COMES HERE
+*/
+
+foreach ($field as $fields) {
+  field_create_field($fields);
+}
+
+$status = node_type_save($content_type);
+node_add_body_field($content_type);
+
+
+} // end install 
