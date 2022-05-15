@@ -24,87 +24,417 @@ function hotel_packages_dhammika_permission() {
 }
 
 /**
+ * Implementation of hook_node_info().
+ */
+function hotel_packages_dhammika_node_info() {
+  return array(
+    'hotel-packages-list' => array(
+      'name' => t('Hotel Packages List'),
+      'base' => 'node_content',
+      'description' => t('Hotel Packages.'),
+    )
+  );
+}
+
+/**
+ * Implementation of hook_form().
+ */
+function hotel_packages_dhammika_form($node, $form_state) {
+  // return node_content_form($node, $form_state);
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('event Title'),
+    '#default_value' => !empty($node->title) ? $node->title : '',
+    '#required' => 1,
+    '#weight' => -5
+  );
+
+  $form['field_hotel_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Hotel Name'),
+    '#default_value' => !empty($node->field_hotel_name) ? $node->field_hotel_name : '',
+    '#required' => 0,
+    '#weight' => -5
+  );
+
+  $form['field_star_rating'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Star Rating'),
+    '#default_value' => !empty($node->field_star_rating) ? $node->field_star_rating : '',
+    '#required' => 0,
+    '#weight' => -5
+  );
+
+  $form['field_area_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Area Name'),
+    '#default_value' => !empty($node->field_area_name) ? $node->field_area_name : '',
+    '#required' => 0,
+    '#weight' => -5
+  );
+
+  $form['field_thumbnail_image'] = array(
+    '#type' => 'image',
+    '#title' => t('Thumbnail'),
+    '#default_value' => !empty($node->field_area_name) ? $node->field_area_name : '',
+    '#required' => 0,
+    '#weight' => -5
+  );
+
+  $form['field_package_price'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Package Price'),
+    '#default_value' => !empty($node->field_area_name) ? $node->field_area_name : '',
+    '#required' => 0,
+    '#weight' => -5
+  );
+
+  $form['field_detail_link'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Detail Link'),
+    '#default_value' => !empty($node->field_area_name) ? $node->field_area_name : '',
+    '#required' => 0,
+    '#weight' => -5
+  );
+  return $form;
+}
+
+
+
+/**
  * Implements hook_install()
  */
 function hotel_packages_dhammika_install(){
 
-global $user;
+  global $user;
 
-  $node = new stdClass();
-  $node->title = "hotel-packages-list";
-  $node->type = "page";
-  node_object_prepare($node);
-  $node->language = LANGUAGE_NONE; 
-  $node->uid = $user->uid;
-  $node->format = 2;
-  $node->status = 1;
-  $node->promote = 0;
-  $node->comment = 0;
-  $node->body = 'Sample body text'; 
-  $node = node_submit( $node );
-  node_save( $node );
+  /* CREATES A NODE NAMED "hotel-packages-list" OF BASIC PAGE TYPE */
+  // $node = new stdClass();
+  // $node->title = "hotel-packages-list";
+  // $node->type = "page";
+  // node_object_prepare($node);
+
+  // $node->language = LANGUAGE_NONE; 
+  // $node->uid = $user->uid;
+  // $node->format = 2;
+  // $node->status = 1;
+  // $node->promote = 0;
+  // $node->comment = 0;
+  // $node->body = 'Sample body text'; 
+  // $node = node_submit( $node );
+  // node_save( $node );
 
 
- /* CREATES CONTENT TYPE */
- $t = get_t();
- $node_example = array(
+  /* CREATES CONTENT TYPE */
+  $t = get_t();
+  $node_example = array(
     'type' => 'hotel-packages-list',
     'name' => $t('Hotel Packages List'),
     'base' => 'node_content',
     'description' => $t('Hotel Packages.'),
     'body_label' => $t('Packages List')
- );
- $content_type = node_type_set_defaults($node_example);
+  );
+  $content_type = node_type_set_defaults($node_example);
 
-// Creates fields
-$field = array(
- 'field_hotel_name' => array (
-   'field_name' => 'field_hotel_name',
-   'type' => 'text',
-   'entity_types' => array('node'),
-  ),
+  node_types_rebuild();
+  $types = node_type_get_types();
+  $status = node_type_save($types['hotel-packages-list']);
 
- 'field_star_rating' => array (
-   'field_name' => 'field_star_rating',
-   'type' => 'number_integer',
-   'entity_types' => array('node'),
-  ),
+  /* CREATES FIELDS */
+  $fields = array(
+   'field_hotel_name' => array (
+     'field_name' => 'field_hotel_name',
+     'label' => $t('Hotel Name'),
+     'type' => 'text',
+     'entity_types' => array('node'),
+    ),
 
- 'field_area_name' => array (
-   'field_name' => 'field_area_name',
-   'type' => 'text',
-   'entity_types' => array('node'),
-  ),
+   'field_star_rating' => array (
+     'field_name' => 'field_star_rating',
+     'label' => $t('Star Rating'),
+     'type' => 'number_decimal',
+     'entity_types' => array('node'),
+    ),
 
-  'field_thumbnail_image' => array (
-    'field_name' => 'field_thumbnail_image',
-    'type' => 'image',
-  ),
+   'field_area_name' => array (
+     'field_name' => 'field_area_name',
+     'label' => $t('Area Name'),
+     'type' => 'text',
+     'entity_types' => array('node'),
+    ),
 
- 'field_package_price' => array (
-   'field_name' => 'field_package_price',
-   'type' => 'text',
-   'entity_types' => array('node'),
-  ),
+    'field_thumbnail_image' => array (
+      'field_name' => 'field_thumbnail_image',
+      'label' => $t('Hotel Thumbnail'),
+      'type' => 'image',
+    ),
 
- 'field_detail_link' => array (
-   'field_name' => 'field_detail_link',
-   'type' => 'text',
-   'entity_types' => array('node'),
-  ),
+   'field_package_price' => array (
+     'field_name' => 'field_package_price',
+     'label' => $t('Package Price'),
+     'type' => 'text',
+     'entity_types' => array('node'),
+    ),
 
-);
+   'field_detail_link' => array (
+     'field_name' => 'field_detail_link',
+     'label' => $t('Detail Link'),
+     'type' => 'text',
+     'entity_types' => array('node'),
+    ),
+  );
+  foreach ($fields as $field) {
+    field_create_field($field);
+  }
 
-/*
-POPULATING FIELDS USING XML FEED COMES HERE
-*/
+  /* CREATES INSTANCES FOR EACH FIELD. */
+  $instances = array(
+    'field_hotel_name' => array (
+      'field_name' => 'field_hotel_name',
+      'entity_type' => 'node',
+      'bundle' => 'hotel-packages-list',
+      'label' => $t('Hotel Name'),
+      'type' => 'text',
+      'widget' => array('type' => 'text_textfield'),
+      'display' => array(
+          'hotel_packages_list' => array(
+              'label' => $t('Hotel Name'),
+              'type' => 'text'
+          )
+      ), 
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'instance_settings' => array(
+        'text_processing' => 0,
+      ),
+      'default_widget' => 'text_textfield',
+      'default_formatter' => 'text_default',           
+     ),
 
-foreach ($field as $fields) {
-  field_create_field($fields);
+    'field_star_rating' => array (
+      'field_name' => 'field_star_rating',
+      'label' => $t('Star Rating'),
+      'type' => 'number_decimal',
+      'entity_type' => 'node',
+      'bundle' => 'hotel-packages-list',
+      'widget' => array('type' => 'number'),
+      'display' => array(
+          'hotel_packages_list' => array(
+              'label' => $t('Star Rating'),
+              'type' => 'number'
+          )
+      ),
+      'settings' => array(
+        'precision' => 10,
+        'scale' => 2,
+        'decimal_separator' => '.',
+      ),             
+    ),
+
+    'field_area_name' => array (
+      'field_name' => 'field_area_name',
+      'label' => $t('Area Name'),
+      'type' => 'text',
+      'entity_type' => 'node',
+      'bundle' => 'hotel-packages-list',
+      'widget' => array('type' => 'text_textfield'),
+      'display' => array(
+          'hotel_packages_list' => array(
+              'label' => $t('Area Name'),
+              'type' => 'text'
+          )
+      ),
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'instance_settings' => array(
+        'text_processing' => 0,
+      ),
+      'default_widget' => 'text_textfield',
+      'default_formatter' => 'text_default',            
+    ),  
+
+    'field_thumbnail_image' => array (
+      'field_name' => 'field_thumbnail_image',
+      'label' => $t('Hotel Thumbnail'),
+      'type' => 'image',
+      'entity_type' => 'node',
+      'bundle' => 'hotel-packages-list',
+      'widget' => array('type' => 'image'),
+      'display' => array(
+          'hotel_packages_list' => array(
+              'label' => $t('Hotel Thumbnail'),
+              'type' => 'image'
+          )
+      ), 
+
+    ),
+
+    'field_package_price' => array (
+      'field_name' => 'field_package_price',
+      'label' => $t('Package Price'),
+      'type' => 'text',
+      'entity_type' => 'node',
+      'bundle' => 'hotel-packages-list',
+      'widget' => array('type' => 'text_textfield'),
+      'display' => array(
+          'hotel_packages_list' => array(
+              'label' => $t('Package Price'),
+              'type' => 'text'
+          )
+      ), 
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'instance_settings' => array(
+        'text_processing' => 0,
+      ),
+      'default_widget' => 'text_textfield',
+      'default_formatter' => 'text_default',      
+    ),
+
+    'field_detail_link' => array (
+      'field_name' => 'field_detail_link',
+      'label' => $t('Detail Link'),
+      'type' => 'text',
+      'entity_type' => 'node',
+      'bundle' => 'hotel-packages-list',
+      'widget' => array('type' => 'text_textfield'),
+      'display' => array(
+          'hotel_packages_list' => array(
+              'label' => $t('Detail Link'),
+              'type' => 'text'
+          )
+      ), 
+      'settings' => array(
+        'max_length' => 255,
+      ),
+      'instance_settings' => array(
+        'text_processing' => 0,
+      ),
+      'default_widget' => 'text_textfield',
+      'default_formatter' => 'text_default',      
+    ),
+
+  );
+  foreach ($instances as $fieldinstance) {
+    field_create_instance($fieldinstance);
+  }
+  
+} // end install 
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function hotel_packages_dhammika_uninstall() {
+    $ournewtype = 'hotel-packages-list';
+    $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+    $result = db_query($sql, array(':type' => $ournewtype));
+    $nodeids = array();
+    foreach ($result as $row) {
+        $nodeids[] = $row->nid;
+    }
+    node_delete_multiple($nodeids);
+    delete_custom_fields();
+    node_type_delete($ournewtype);
 }
 
-$status = node_type_save($content_type);
-node_add_body_field($content_type);
+
+/* FORCED DELETION OF FIELDS INSTANCES */
+function delete_custom_fields() {
+    $instances = field_info_instances('node', 'hotel-packages-list');
+    foreach ($instances as $fieldinstance) {  
+      field_delete_instance($fieldinstance);
+    }
+    field_purge_batch(500);
+}
 
 
-} // end install 
+/**
+ * Implements hook_menu().
+ */
+function hotel_packages_dhammika_menu() {
+  $items['admin/main/custom/import'] = array(
+    'title' => 'Hotel packages',
+    'description' => 'Custom module functions by Dhammika',
+    'position' => 'left',
+    'weight' => -100,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/main/custom/import/create-type'] = array(
+    'title' => 'Create content type',
+    'description' => '',
+    'page callback' => 'hotel_packages_dhammika_create_content_type',
+    'access arguments' => array('custom permission'),
+    'type' => MENU_NORMAL_ITEM,
+  );  
+
+  $items['admin/main/custom/import/delete-type'] = array(
+    'title' => 'Delete content type',
+    'description' => '',
+    'page callback' => 'hotel_packages_dhammika_delete_content_type',
+    'access arguments' => array('custom permission'),
+    'type' => MENU_NORMAL_ITEM,
+  ); 
+
+  $items['admin/main/custom/import/pckglist'] = array(
+    'title' => 'Import packages via JSON',
+    'description' => '',
+    'page callback' => 'hotel_packages_dhammika_import_json',
+    // 'page arguments' => array('custom_form'),
+    'access arguments' => array('custom permission'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/* FORCED CONTENT TYPE CREATION*/
+function hotel_packages_dhammika_create_content_type(){
+  hotel_packages_dhammika_install();
+  return t("content created");
+}
+
+/* FORCED CONTENT TYPE DELETION */
+function hotel_packages_dhammika_delete_content_type(){
+  hotel_packages_dhammika_uninstall();
+  return t("content removed");
+}
+
+/* IMPORTS DATA FROM JSON FILE */
+function hotel_packages_dhammika_import_json(){
+
+  $modulepath = drupal_get_path('module', 'hotel_packages_dhammika');
+  $feed = file_get_contents( $modulepath . "/hotels.json");
+  $feed_json = json_decode($feed, true);
+
+  foreach($feed_json['hotels'] as $item){
+    /*CREATING ENTITY INSTANCES USING ENTITY API MODULE */
+    $node = entity_create('node', array('type' => 'hotel-packages-list'));
+    $node_wrapper = entity_metadata_wrapper('node',$node);
+
+    $node_wrapper->author = 1;
+    $node_wrapper->title->set($item['hotel_name']);
+    $node_wrapper->field_hotel_name->set($item['hotel_name']);
+    $node_wrapper->field_star_rating->set( (double)$item['star_rating'] );
+    $node_wrapper->field_area_name->set($item['city']);
+
+    $file_std_obj = file_save_data ( 
+      file_get_contents($item['photo1']),
+      'public://'.$item['hotel_id'].".jpg"
+    );
+
+    $node_wrapper->field_thumbnail_image->file->set($file_std_obj);
+    $node_wrapper->field_package_price->set($item['rates_from']);
+    $node_wrapper->field_detail_link->set($item['url']);
+
+    $node_wrapper->save();
+  }
+    return t("feed imported");
+}
